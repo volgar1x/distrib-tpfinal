@@ -2,12 +2,13 @@ NAME    = server
 SRC_DIR = src
 INC_DIR = include
 OUT_DIR = _build
+OPTI    = -O2
 
 SRC = $(wildcard $(SRC_DIR)/*.c)
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OUT_DIR)/%.o)
 
 CDEPS  = 
-CFLAGS = -Wall -O2 -I$(SRC_DIR) -I$(INC_DIR) $(CDEPS)
+CFLAGS = -Wall $(OPTI) -I$(INC_DIR) $(CDEPS)
 CC     = gcc $(CCMD) $(CFLAGS)
 
 LDFLAGS =
