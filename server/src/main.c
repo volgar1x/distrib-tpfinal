@@ -5,7 +5,8 @@
 
 int main(int argc, char **argv) {
   struct sockaddr_in csin;
-  int                sock, csock, csinlen = sizeof(csin);
+  int                sock, csock;
+	socklen_t          csinlen = sizeof(csin);
 
   sock = tcp_listen(PORT, BACKLOG);
   if (-1 == sock) {
