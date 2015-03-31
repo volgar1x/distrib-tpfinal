@@ -1,6 +1,7 @@
 #include "util.h"
 
 #include <string.h>
+#include <stdlib.h>
 
 int str_to_int(char* str) {
 	int delta, i, acc;
@@ -27,7 +28,7 @@ int str_to_int(char* str) {
 
 char** str_split(char* str, int off, int len, char c, int* arr_len_out) {
 	int i, j, start, arr_len;
-	char **res, **ss;
+	char **res, *ss;
 
 	// estimate array length
 	arr_len = 1;
@@ -46,7 +47,7 @@ char** str_split(char* str, int off, int len, char c, int* arr_len_out) {
 				ss = (char*) malloc(sizeof(char) * (i - start));
 				memcpy(ss, str + start, i - start);
 			} else {
-				char* ss = (char*) malloc(sizeof(char));
+				ss = (char*) malloc(sizeof(char));
 				ss[0] = '\0';
       }
 
