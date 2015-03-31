@@ -20,7 +20,7 @@ $(OUT_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) -c -o $@ $^
 
 pre_build:
-	test -d $(OUT_DIR) || mkdir $(OUT_DIR)
+	mkdir -p $(OUT_DIR)
 
 build: pre_build $(OBJ)
 	$(LD) -o $(OUT_DIR)/$(NAME) $(OBJ)
