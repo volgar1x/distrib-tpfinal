@@ -14,7 +14,7 @@ CC     = gcc $(CCMD) $(CFLAGS)
 LDFLAGS =
 LD      = gcc $(LDFLAGS)
 
-all: clean build
+all: build
 
 $(OUT_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) -c -o $@ $^
