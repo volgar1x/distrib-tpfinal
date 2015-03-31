@@ -1,11 +1,16 @@
 #ifndef BANK_H
 #define BANK_H
 
+typedef struct {
+	char name[255], firstname[255];
+} bank_account_infos;
+
 /**
  * `bank_account' is a struct representing an account.
  */
 typedef struct __bank_account {
-	int id, amount;
+	int                id, amount;
+	bank_account_infos infos;
 	struct __bank_account *next;
 } bank_account;
 

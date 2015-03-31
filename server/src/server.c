@@ -22,7 +22,9 @@ void server_send(client_t c, char* msg) {
 
 void server_send_account_status(client_t c, bank_account* account) {
 	char msg[100];
-	sprintf(msg, "success,%d,%d\n", account->id, account->amount);
+	sprintf(msg, "success,%d,%s,%s,%d\n", account->id, account->infos.name,
+																				account->infos.firstname,
+																				account->amount);
 	server_send(c, msg);
 }
 
@@ -35,8 +37,8 @@ error_t server_handle(client_t c, char *data, int data_len) {
 
 	args = str_split(data, 0, data_len - 1, ',', &args_len);
 
-	if (args_len == 1 && strcmp(args[0], "create") == 0) {
-		return server_handle_create(c);
+	if (args_len == 3 && strcmp(args[0], "create") == 0) {
+		return server_handle_create(c, args[1], args[2]);
   } else if (args_len == 3 && strcmp(args[0], "deposit") == 0) {
 		id     = atoi(args[1]);
 		amount = atoi(args[2]);
@@ -53,6 +55,9 @@ error_t server_handle(client_t c, char *data, int data_len) {
 		to     = atoi(args[2]);
 		amount = atoi(args[3]);
 		return server_handle_transfer(c, from, to, amount);
+  } else if (args_len == 4 && strcmp(args[0], "infos") == 0) {
+		id = atoi(args[1]);
+		return server_handle_infos(c, id, args[2], args[3]);
   }
 
 	if (args_len >= 1) {
@@ -63,8 +68,10 @@ error_t server_handle(client_t c, char *data, int data_len) {
 	return 0;
 }
 
-error_t server_handle_create(client_t c) {
+error_t server_handle_create(client_t c, char* name, char* firstname) {
 	bank_account* acc = bank_create_account(the_bank);
+	strcpy(acc->infos.name, name);
+	strcpy(acc->infos.firstname, firstname);
 	server_send_account_status(c, acc);
 	return 0;
 }
@@ -145,6 +152,23 @@ error_t server_handle_transfer(client_t c, int a, int b, int amount) {
 	to->amount   += amount;
 
 	server_send_account_status(c, from);
+
+	return 0;
+}
+
+error_t server_handle_infos(client_t c, int id, char* name, char* firstname) {
+	bank_account* acc = bank_get_account(the_bank, id);
+	if (acc == NULL) {
+		server_send(c, "error,not_found\n");
+		return 0;
+  }
+
+	bank_account_infos infos;
+	strcpy(infos.name, name);
+	strcpy(infos.firstname, firstname);
+
+	acc->infos = infos;
+	server_send_account_status(c, acc);
 
 	return 0;
 }
