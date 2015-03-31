@@ -17,5 +17,6 @@ error_t server_handle_create(int sock, struct sockaddr_in csin);
 error_t server_handle_deposit(int sock, struct sockaddr_in csin, int id, int amount);
 error_t server_handle_withdraw(int sock, struct sockaddr_in csin, int id, int amount);
 error_t server_handle_query(int sock, struct sockaddr_in csin, int id);
+error_t server_handle_transfer(int sock, struct sockaddr_in csin, int from, int to, int amount);
 
 #endif//SERVER_H

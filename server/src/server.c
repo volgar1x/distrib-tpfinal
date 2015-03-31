@@ -28,7 +28,7 @@ void server_send_account_status(int sock, struct sockaddr_in csin, bank_account*
 
 error_t server_handle(int sock, struct sockaddr_in csin, char *data, int data_len) {
 	int args_len;
-	int id, amount;
+	int id, from, to, amount;
 	char **args;
 	
 	printf("RECV %s\n", data);
@@ -38,16 +38,21 @@ error_t server_handle(int sock, struct sockaddr_in csin, char *data, int data_le
 	if (args_len == 1 && strcmp(args[0], "create") == 0) {
 		return server_handle_create(sock, csin);
   } else if (args_len == 3 && strcmp(args[0], "deposit") == 0) {
-		id = atoi(args[1]);
+		id     = atoi(args[1]);
 		amount = atoi(args[2]);
 		return server_handle_deposit(sock, csin, id, amount);
   } else if (args_len == 3 && strcmp(args[0], "withdraw") == 0) {
-		id = atoi(args[1]);
+		id     = atoi(args[1]);
 		amount = atoi(args[2]);
 		return server_handle_withdraw(sock, csin, id, amount);
   } else if (args_len == 2 && strcmp(args[0], "query") == 0) {
 		id = atoi(args[1]);
 		return server_handle_query(sock, csin, id);
+  } else if (args_len == 4 && strcmp(args[0], "transfer") == 0) {
+		from   = atoi(args[1]);
+		to     = atoi(args[2]);
+		amount = atoi(args[3]);
+		return server_handle_transfer(sock, csin, from, to, amount);
   }
 
 	if (args_len >= 1) {
@@ -110,5 +115,36 @@ error_t server_handle_withdraw(int sock, struct sockaddr_in csin, int id, int am
 error_t server_handle_query(int sock, struct sockaddr_in csin, int id) {
 	bank_account* acc = bank_get_account(the_bank, id);
 	server_send_account_status(sock, csin, acc);
+	return 0;
+}
+
+error_t server_handle_transfer(int sock, struct sockaddr_in csin, int a, int b, int amount) {
+	if (amount < 0) {
+		server_send(sock, csin, "error,amount_negative\n");
+		return 0;
+  }
+
+	bank_account *from = bank_get_account(the_bank, a),
+							 *to   = bank_get_account(the_bank, b);
+
+	if (from == NULL) {
+		server_send(sock, csin, "error,not_found,from\n");
+		return 0;
+  }
+	if (to == NULL) {
+		server_send(sock, csin, "error,not_found,to\n");
+		return 0;
+  }
+
+	if (amount > from->amount) {
+		server_send(sock, csin, "error,amount_too_high\n");
+		return 0;
+  }
+
+	from->amount -= amount;
+	to->amount   += amount;
+
+	server_send_account_status(sock, csin, from);
+
 	return 0;
 }
