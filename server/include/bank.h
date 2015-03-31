@@ -2,23 +2,23 @@
 #define BANK_H
 
 typedef struct {
-	char name[255], firstname[255];
+  char name[255], firstname[255];
 } bank_account_infos;
 
 /**
  * `bank_account' is a struct representing an account.
  */
 typedef struct __bank_account {
-	int                id, amount;
-	bank_account_infos infos;
-	struct __bank_account *next;
+  int                id, amount;
+  bank_account_infos infos;
+  struct __bank_account *next;
 } bank_account;
 
 /**
  * `bank' is a struct representing a whole bank.
  */
 typedef struct {
-	bank_account *hd, *tl;
+  bank_account *hd, *tl;
 } bank;
 
 /**

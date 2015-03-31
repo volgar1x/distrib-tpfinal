@@ -6,9 +6,9 @@
 #include <unistd.h>
 
 typedef struct {
-	int              sock;
-	struct sockaddr* addr;
-	socklen_t        addr_len;
+  int              sock;
+  struct sockaddr* addr;
+  socklen_t        addr_len;
 } client_t;
 
 int  client_recv(client_t c, void* buf, size_t len);
