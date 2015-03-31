@@ -6,7 +6,7 @@
  */
 typedef struct __bank_account {
 	int id, amount;
-	__bank_account *next;
+	struct __bank_account *next;
 } bank_account;
 
 /**
@@ -32,7 +32,7 @@ void bank_free(bank* bank);
 bank_account* bank_create_account(bank* bank);
 
 /**
- * Get an account from the bank using its ID. Return NULL if not found.
+ * Retrieve or create an account from the bank using its ID. Return NULL if not found.
  */
 bank_account* bank_get_account(bank* bank, int id);
 

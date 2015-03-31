@@ -29,14 +29,16 @@ int main(int argc, char **argv) {
 		return 1;
   }
 
+	server_init();
 	buf = (char*) malloc(sizeof(char) * BUFLEN);
 	// boucle infinie
 	for (;;) {
 		n = recvfrom(sock, buf, BUFLEN, 0, (struct sockaddr*)&csin, &csin_len);
 
 		data = (char*) malloc(sizeof(char) * n);
-		memcpy(data, buf, n);
-		err = server_handle(data);
+		data[n-1] = '\0';
+		memcpy(data, buf, n-1);
+		err = server_handle(sock, csin, data, n-1);
 		free(data);
 		if (err) {
 			perror("server fault");
@@ -45,6 +47,7 @@ int main(int argc, char **argv) {
   }
 
 	free(buf);
+	server_clean();
 
 	return 0;
 }

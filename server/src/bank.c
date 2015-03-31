@@ -3,12 +3,12 @@
 #include <stdlib.h>
 
 bank* bank_new() {
-	bank* bank;
+	bank* the_bank;
 
-	bank = (bank*) malloc(sizeof(bank));
-	bank->hd = bank->tl = NULL;
+	the_bank = (bank*) malloc(sizeof(bank));
+	the_bank->hd = the_bank->tl = NULL;
 
-	return bank
+	return the_bank;
 }
 
 void bank_free(bank* bank) {
@@ -23,7 +23,6 @@ void bank_free(bank* bank) {
 }
 
 bank_account* bank_create_account(bank* bank) {
-	int          id;
 	bank_account *acc;
 
 	acc = (bank_account*) malloc(sizeof(bank_account));
