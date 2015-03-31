@@ -1,11 +1,8 @@
-#include "sockets.h"
+#ifndef SERVER_H
+#define SERVER_H
 
-#ifndef SERVERS_H
-#define SERVERS_H
+typedef int error_t;
 
-void server_handle(int sock, struct sockaddr* saddr);
-void server_handle_recv(int sock, struct sockaddr* saddr, void* data);
-void server_handle_conn(int sock, struct sockaddr* saddr);
-void server_handle_dcnn(int sock, struct sockaddr* saddr, int last_payload);
+error_t server_handle(char *data);
 
-#endif
+#endif//SERVER_H

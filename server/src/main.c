@@ -1,38 +1,50 @@
-/// @author Antoine CHAUVIN
-
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "config.h"
 #include "sockets.h"
+#include "config.h"
+#include "server.h"
 
 int main(int argc, char **argv) {
-  struct sockaddr_in csin;
-  int                sock, csock;
-	socklen_t          csinlen = sizeof(csin);
+	int                sock, n;
+	struct sockaddr_in sin, csin;
+	socklen_t          csin_len;
+	char               *buf, *data;
+	error_t            err;
 
-	/** Create a TCP listening socket. */
-  sock = tcp_listen(PORT, BACKLOG);
-  if (-1 == sock) {
-    perror("couldnt listen on port");
-    return 1;
+	sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (-1 == sock) {
+		perror("couldnt create socket");
+		return 1;
   }
 
-	/** An infinite loop accepting all clients. */
-  for (;;) {
-		/** Accept one client. */
-		bzero(&csin, sizeof(csin));
-    csock = accept(sock, (struct sockaddr*)&csin, &csinlen);
-    if (-1 == csock) {
-      perror("failed to accept a connection");
-      break;
+	sin.sin_family      = AF_INET;
+	sin.sin_port        = htons(PORT);
+	sin.sin_addr.s_addr = htonl(INADDR_ANY);
+	csin_len            = sizeof(csin);
+
+	if (-1 == bind(sock, (struct sockaddr*)&sin, sizeof(sin))) {
+		perror("couldnt bind socket");
+		return 1;
+  }
+
+	buf = (char*) malloc(sizeof(char) * BUFLEN);
+	// boucle infinie
+	for (;;) {
+		n = recvfrom(sock, buf, BUFLEN, 0, (struct sockaddr*)&csin, &csin_len);
+
+		data = (char*) malloc(sizeof(char) * n);
+		memcpy(data, buf, n);
+		err = server_handle(data);
+		free(data);
+		if (err) {
+			perror("server fault");
+			break;
     }
-
-		/** Let the server handle the connection. */
-		server_handle(csock, csin);
   }
 
-	/** Clean things up. */
-  close(sock);
+	free(buf);
 
-  return 0;
+	return 0;
 }
