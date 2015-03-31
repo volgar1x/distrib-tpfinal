@@ -121,6 +121,10 @@ error_t server_handle_withdraw(client_t c, int id, int amount) {
 
 error_t server_handle_query(client_t c, int id) {
   bank_account* acc = bank_get_account(the_bank, id);
+  if (acc == NULL) {
+    server_send(c, "error,not_found,from\n");
+    return 0;
+  }
   server_send_account_status(c, acc);
   return 0;
 }
