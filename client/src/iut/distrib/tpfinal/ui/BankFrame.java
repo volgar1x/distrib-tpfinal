@@ -27,8 +27,8 @@ public class BankFrame extends JFrame implements ActionListener {
         deposit  = new JButton("Deposit");
         withdraw = new JButton("Withdraw");
         transfer = new JButton("Transfer");
-        query    = new JButton("Query");
-        infos    = new JButton("Infos");
+        query    = new JButton("Query an account");
+        infos    = new JButton("Update your infos");
         exit     = new JButton("Exit");
 
         setLayout(new GridLayout(1, 2));
