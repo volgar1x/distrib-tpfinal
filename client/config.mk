@@ -1,6 +1,9 @@
 # The Main-Class name
 MAIN    = iut.distrib.tpfinal.ui.BankInitFrame
 
+# The name of the generated JAR file
+NAME    = client.jar
+
 # Location of the Java Compiler
 JC      = javac
 

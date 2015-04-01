@@ -1,18 +1,15 @@
 include config.mk
 
 JAVA  = $(shell find src/ -name '*.java')
-CLASS = $(patsubst src/%.java, _build/%.class, $(JAVA))
 MANIFEST = $(OUT_DIR)/META-INF/MANIFEST.MF
 
-default: build
-
-_build/%.class: src/%.java
-	$(JC) $(JCFLAGS) -cp $(SRC_DIR) -d $(OUT_DIR) $<
+default: build $(NAME)
 
 pre_build:
-	mkdir -p $(OUT_DIR)
+	@mkdir -p $(OUT_DIR)
 
-build: pre_build $(CLASS)
+build: pre_build
+	$(JC) $(JCFLAGS) -d $(OUT_DIR) $(JAVA)
 
 clean:
 	rm -rf $(OUT_DIR)
@@ -21,8 +18,8 @@ run: build
 	$(J) $(JFLAGS) -cp $(OUT_DIR) $(MAIN)
 
 $(MANIFEST):
-	mkdir -p $(OUT_DIR)/META-INF
+	@mkdir -p `dirname $(MANIFEST)`
 	echo "Main-Class: $(MAIN)" > $(OUT_DIR)/META-INF/MANIFEST.MF
 
-jar: build $(MANIFEST)
-	cd $(OUT_DIR); zip -r client.jar .
+$(NAME): build $(MANIFEST)
+	cd $(OUT_DIR); zip -r $(NAME) . > /dev/null
