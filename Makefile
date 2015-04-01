@@ -1,7 +1,7 @@
 .PHONY: server client
 
 default: server client
-	cp server/_build/server server.exe
+	cp server/_build/server serverd
 	cp client/_build/client.jar client.jar
 
 server:
@@ -13,6 +13,6 @@ client:
 clean:
 	@make -C server clean
 	@make -C client clean
-	rm -f server.exe
+	rm -f serverd
 	rm -f client.jar
 

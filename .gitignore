@@ -3,3 +3,5 @@ _build/
 *.iml
 .idea/
 out/
+./client.jar
+./serverd
