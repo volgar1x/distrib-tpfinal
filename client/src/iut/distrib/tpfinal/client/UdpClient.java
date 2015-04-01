@@ -112,4 +112,9 @@ public class UdpClient implements Client {
         send("infos,%d,%s,%s", id, infos.getName(), infos.getFirstname());
         receiveBankAccount();
     }
+
+    @Override
+    public void close() {
+        socket.close();
+    }
 }

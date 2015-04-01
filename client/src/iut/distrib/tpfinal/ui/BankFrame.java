@@ -15,7 +15,7 @@ public class BankFrame extends JFrame implements ActionListener {
     private final BankAccount account;
 
     JLabel dollars;
-    JButton deposit, withdraw, transfer, query, infos, exit;
+    JButton deposit, withdraw, transfer, query, infos, exit, dconn;
 
     public BankFrame(Client client, BankAccount account) {
         this.client = client;
@@ -29,6 +29,7 @@ public class BankFrame extends JFrame implements ActionListener {
         transfer = new JButton("Transfer");
         query    = new JButton("Query an account");
         infos    = new JButton("Update your infos");
+        dconn    = new JButton("Disconnect");
         exit     = new JButton("Exit");
 
         setLayout(new GridLayout(1, 2));
@@ -36,12 +37,13 @@ public class BankFrame extends JFrame implements ActionListener {
         add(dollars);
 
         Container buttonList = new Container();
-        buttonList.setLayout(new GridLayout(6, 1));
+        buttonList.setLayout(new GridLayout(7, 1));
         buttonList.add(deposit);
         buttonList.add(withdraw);
         buttonList.add(transfer);
         buttonList.add(query);
         buttonList.add(infos);
+        buttonList.add(dconn);
         buttonList.add(exit);
 
         add(buttonList);
@@ -51,6 +53,7 @@ public class BankFrame extends JFrame implements ActionListener {
         transfer.addActionListener(this);
         query.addActionListener(this);
         infos.addActionListener(this);
+        dconn.addActionListener(this);
         exit.addActionListener(this);
 
 
@@ -63,13 +66,22 @@ public class BankFrame extends JFrame implements ActionListener {
     private void updateDollars() {
         int amount = account.getAmount();
 
+        StringBuilder text = new StringBuilder();
+
+        text.append("<html>");
+        text.append("<b>Account ID</b> ").append(account.getId()).append("<br/>");
+
+        text.append("<b>Balance</b> ");
         if (amount == 0) {
-            dollars.setText("  0,00 $");
+            text.append("  0,00 $");
         } else if (amount > 0) {
-            dollars.setText(String.format("+ %d,00 $", amount));
+            text.append("+ ").append(account.getAmount()).append(",00 $");
         } else {
-            dollars.setText(String.format("- %d,00 $", amount));
+            text.append("- ").append(account.getAmount()).append(",00 $");
         }
+        text.append("</html>");
+
+        dollars.setText(text.toString());
     }
 
     private void updateInfos() {
@@ -127,6 +139,9 @@ public class BankFrame extends JFrame implements ActionListener {
                 client.infos(account.getId(), infos);
                 account.setInfos(infos);
             } else if (evt.getSource() == exit) {
+                dispose();
+            } else if (evt.getSource() == dconn) {
+                new BankInitFrame();
                 dispose();
             }
         } catch (AmountNegativeException e) {

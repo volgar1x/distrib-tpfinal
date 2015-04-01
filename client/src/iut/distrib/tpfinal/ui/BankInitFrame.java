@@ -18,31 +18,71 @@ public class BankInitFrame extends JFrame implements ActionListener {
         new BankInitFrame();
     }
 
-    JTextField address, port;
-    JTextField name, firstname, id;
-    JButton submit;
+    JTextField address, port, id, name, firstname;
+    JButton submit, create;
 
-    private BankInitFrame() {
-        JLabel addressLabel = new JLabel("Adresse IPv4 de la Banque");
+    int state;
+
+    public BankInitFrame() {
         address = new JTextField("localhost");
-
-        JLabel portLabel = new JLabel("Port du serveur");
         port = new JTextField("64646");
-
-        JLabel nameLabel = new JLabel("Nom");
-        name = new JTextField();
-        name.requestFocus();
-
-        JLabel firstnameLabel = new JLabel("Prenom");
-        firstname = new JTextField();
-
-        JLabel idLabel = new JLabel("ID du Compte");
         id = new JTextField();
+        name = new JTextField();
+        firstname = new JTextField();
+        submit = new JButton();
+        create = new JButton();
 
-        submit = new JButton("Connect");
+
+        connectLayout();
 
 
-        setLayout(new GridLayout(6, 2));
+        submit.addActionListener(this);
+        create.addActionListener(this);
+
+
+        setTitle("The Bank");
+        setVisible(true);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
+
+    private void connectLayout() {
+        state = 1;
+        getContentPane().removeAll();
+
+        submit.setText("Connect");
+        create.setText("I'm new!");
+
+        JLabel addressLabel = new JLabel("IPv4 address");
+        JLabel portLabel = new JLabel("Port");
+        JLabel idLabel = new JLabel("Account ID");
+        setLayout(new GridLayout(4, 2));
+        addressLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        add(addressLabel);
+        add(this.address);
+        portLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        add(portLabel);
+        add(this.port);
+        idLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        add(idLabel);
+        add(id);
+        add(create);
+        add(submit);
+
+        pack();
+    }
+
+    private void createLayout() {
+        state = 2;
+        getContentPane().removeAll();
+
+        submit.setText("Have an account?");
+        create.setText("Create");
+
+        JLabel addressLabel = new JLabel("IPv4 address");
+        JLabel portLabel = new JLabel("Port");
+        JLabel nameLabel = new JLabel("Name");
+        JLabel firstnameLabel = new JLabel("First Name");
+        setLayout(new GridLayout(5, 2));
         addressLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         add(addressLabel);
         add(address);
@@ -55,37 +95,46 @@ public class BankInitFrame extends JFrame implements ActionListener {
         firstnameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         add(firstnameLabel);
         add(firstname);
-        idLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        add(idLabel);
-        add(id);
-        add(new JLabel());//spacing
         add(submit);
+        add(create);
 
-        submit.addActionListener(this);
-
-
-        setTitle("The Bank");
-        setVisible(true);
         pack();
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     @Override
     public void actionPerformed(ActionEvent evt) {
         if (evt.getSource() == submit) {
+            if (state == 2) {
+                connectLayout();
+                return;
+            }
+
             Client client = new UdpClient(address.getText(), Integer.parseInt(port.getText()));
 
             int id = Integer.parseInt(this.id.getText());
-            String name = this.name.getText();
-            String firstname = this.firstname.getText();
 
             BankAccount account;
             try {
                 account = client.query(id);
             } catch (NotFoundException e) {
-                JOptionPane.showMessageDialog(this, "Le compte "+id+" n'existe pas, il sera donc créé.");
-                account = client.create(new BankAccountInfos(name, firstname));
+                JOptionPane.showMessageDialog(this, "Account "+id+" does not exist");
+                return;
             }
+
+            new BankFrame(client, account);
+            dispose();
+        } else if (evt.getSource() == create) {
+            if (state == 1) {
+                createLayout();
+                return;
+            }
+
+            Client client = new UdpClient(address.getText(), Integer.parseInt(port.getText()));
+
+            String name = this.name.getText();
+            String firstname = this.firstname.getText();
+
+            BankAccount account = client.create(new BankAccountInfos(name, firstname));
 
             new BankFrame(client, account);
             dispose();

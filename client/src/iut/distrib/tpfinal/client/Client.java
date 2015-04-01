@@ -10,4 +10,6 @@ public interface Client {
     int transfer(int from, int to, int amount);
     BankAccount query(int id);
     void infos(int id, BankAccountInfos infos);
+
+    void close();
 }
