@@ -16,3 +16,7 @@ $ ./serverd &
 $ java -jar ./client.jar
 ```
 
+## Tested on
+
+* Ubuntu 14.04.02
+
