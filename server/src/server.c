@@ -9,10 +9,12 @@ static bank* the_bank = NULL;
 
 void server_init() {
   the_bank = bank_new();
+	bank_load(the_bank, "the_bank");
 }
 
 void server_clean() {
-  bank_free(the_bank);
+	bank_save(the_bank, "the_bank");
+	bank_free(the_bank);
   the_bank = NULL;
 }
 
@@ -58,6 +60,8 @@ error_t server_handle(client_t c, char *data, int data_len) {
   } else if (args_len == 4 && strcmp(args[0], "infos") == 0) {
     id = atoi(args[1]);
     return server_handle_infos(c, id, args[2], args[3]);
+  } else if (args_len == 1 && strcmp(args[0], "quit") == 0) {
+		return 1;
   }
 
   if (args_len >= 1) {

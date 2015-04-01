@@ -32,6 +32,16 @@ bank* bank_new();
 void bank_free(bank* bank);
 
 /**
+ * Load a bank from a file.
+ */
+void bank_load(bank* bank, const char* filename);
+
+/**
+ * Save a bank to a file.
+ */
+void bank_save(bank* bank, const char* filename);
+
+/**
  * Create an account and add it to the bank.
  */
 bank_account* bank_create_account(bank* bank);
